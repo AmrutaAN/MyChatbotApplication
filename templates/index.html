@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width initial-scale=1.0">
+    <title>Chatbot</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+    <style>
+        body{
+            font-family: monospace;
+        }
+        #chatbox {
+            margin-left: auto;
+            margin-right: auto;
+            width: 60%;
+            margin-top: 50px;
+        }
+        .botText{
+            font-family: monospace;
+            font-size: 16px
+            text-align: left;
+            line-height: 25px;
+            color: blue;
+        }
+        #userInput{
+            margin-left: auto;
+            margin-right: auto;
+            width: 60%;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #textInput{
+            border: 3px white;
+            border-bottom: 3px solid #657889;
+            font-family: monospace;
+            font-size: 16px;
+            width: 60%;
+            padding: 20px;
+            color: blue;
+            border-style: dashed;
+        }
+        #buttonInput{
+            padding: 5px;
+            font-family: monospace bold;
+            font-size: 16px;
+            padding: 10px;
+            border: 3px solid brown;
+            background-color: #ffff66;
+            color: 660000;
+            border-radius: 10px;
+        }
+        h1{
+            text-align: center;
+            color: brown;
+        }
+
+        body{
+            font-family: monospace;
+
+        }
+
+        .userText{
+            text-align: right;
+            font-family: monospace;
+            font-size: 16px
+            line-height: 25px;
+            color: #660066;
+
+        }
+
+    </style>
+
+
+</head>
+
+<body>
+    <h1> Weather Chatbot App </h1>
+    <div>
+        <div id="chatbox">
+            <p class = "botText"><span>Which city do you want to know its weather forecast? <br>
+                1.New York <br>
+                2.San Diego <br>
+                3.Los Angeles <br>
+                4.Mumbai <br>
+                5.Pune</span></p>
+        </div>
+        <div id="userInput">
+            <input id="textInput" type="text" name="userMessage" placeholder="Type here your message...."/>
+            <input id="buttonInput" type="submit" value="Send"/>
+            <p id="result"></p>
+        </div>
+    </div>
+
+    <script>
+        function getUserResponse(){
+
+            var userText = $('#textInput').val();
+            var userHTML = "<p class='userText'>User : <span>"+ userText+"</span></p>"
+            $('#textInput').val("");
+            $('#chatbox').append(userHTML);
+            document.getElementById("userInput").scrollIntoView({block:'start',behavior:'smooth'});
+            if (userText == "1") {
+                document.getElementById("result").innerHTML = 'hello' + ' :: ' + 'New York';
+                userText = "New York";
+            } else if (userText == "2") {
+                document.getElementById("result").innerHTML = 'hello' + ' :: ' + 'San Diego';
+                userText = "San Diego";
+            }else if (userText == "3") {
+                document.getElementById("result").innerHTML = 'hello' + ' :: ' + 'Los Angeles';
+                userText = "Los Angeles";
+            }else if (userText == "4") {
+                document.getElementById("result").innerHTML = 'hello' + ' :: ' + 'Mumbai';
+                userText = "Mumbai";
+            }else if (userText == "5") {
+                document.getElementById("result").innerHTML = 'hello' + ' :: ' + 'Pune';
+                userText = "Pune";
+            }
+            $.get("/get",{userMessage:userText}).done(function(data){
+                var stat = data.cod;
+                var botHTML = "";
+                //document.getElementById("result").innerHTML = 'hello' + data.cod;
+                if (data.cod == 200){
+                     botHTML = "<p class='botText'><span> Chatbot : <b>Weather for City : " + data.name +
+                                    " </b> <b>Temperature: </b>" + data.main.temp +
+                                    " - <b> Conditions: </b>" + data.weather[0].description+
+                                    " - <b> Humidity: </b>" + data.main.humidity +
+                            "</span></p>"
+                }else if(data.cod == 404) {
+                            botHTML = "<p class='botText'><span> Chatbot : Please enter correct input </span> </p>"
+                } else {
+                    botHTML = "<p class='botText'><span> Chatbot : Something went wrong!!! Please try again.</span> </p>"
+                }
+                $('#chatbox').append(botHTML);
+            });
+        }
+
+        $("#textInput").keypress(function(e){
+            if(e.which == 13){
+                getUserResponse();
+            }
+        });
+
+        $('#buttonInput').click(function(){
+            getUserResponse();
+        })
+
+
+
+    </script>
+</body>
+</html>
